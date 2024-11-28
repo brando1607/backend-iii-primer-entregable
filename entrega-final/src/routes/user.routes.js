@@ -7,9 +7,9 @@ export const userRouter = Router();
 
 //rutas de usuario
 
-userRouter.get("/", UserController.getAll);
+userRouter.get("/getAllUsers", UserController.getAll);
 
-userRouter.get("/:userId", UserController.getById);
+userRouter.get("/getOneUser/:userId", UserController.getById);
 
 userRouter.delete("/delete/:userId", UserController.delete);
 

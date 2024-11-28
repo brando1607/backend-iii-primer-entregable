@@ -1,12 +1,14 @@
 import { GetRepositories } from "../repository/index.repository.js";
+import { CustomError } from "../utils/errors/customError.utils.js";
+import { errors } from "../utils/errors/errors.js";
 
 export class UserController {
-  static async getAll(req, res) {
+  static async getAll(req, res, next) {
     try {
       const users = await GetRepositories.userRepository.getAll();
       return res.send(users);
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
   static async getById(req, res, next) {
@@ -33,15 +35,28 @@ export class UserController {
       next(error);
     }
   }
-  static async logout(req, res) {
-    res.cookie("token", "", { expires: new Date(0) });
+  static async logout(req, res, next) {
+    try {
+      if (!req.cookies.token) {
+        return CustomError.newError(errors.error.notLoggedIn);
+      }
 
-    return res.status(200).send({ message: "Logged out" });
+      res.cookie("token", "", { expires: new Date(0) });
+      return res.status(200).send({ message: "Logged out" });
+    } catch (error) {
+      next(error);
+    }
   }
-  static async delete(req, res) {
-    const { userId } = req.params;
+  static async delete(req, res, next) {
+    try {
+      const { userId } = req.params;
 
-    const userDeleted = await GetRepositories.userRepository.delete({ userId });
-    return res.send(userDeleted);
+      const userDeleted = await GetRepositories.userRepository.delete({
+        userId,
+      });
+      return res.send(userDeleted);
+    } catch (error) {
+      next(error);
+    }
   }
 }

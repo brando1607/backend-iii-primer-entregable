@@ -1,5 +1,6 @@
 export const errors = {
   error: {
+    notLoggedIn: { message: "User not logged in", statusCode: 400 },
     clientError: { message: "Client Error", statusCode: 400 },
     registrationError: { message: "Client Error", statusCode: 400 },
     wrongUserId: { message: "Id not 24 characters long", statusCode: 400 },

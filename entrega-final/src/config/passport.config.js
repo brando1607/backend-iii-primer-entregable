@@ -60,7 +60,7 @@ export function initializePassport() {
           const validPassword = await verifyPassword(password, user.password);
 
           if (!validPassword) {
-            return done(null, false, { message: "Password not valid" });
+            return done(null, false, { message: "Invalid credentials" });
           }
 
           return done(null, user);

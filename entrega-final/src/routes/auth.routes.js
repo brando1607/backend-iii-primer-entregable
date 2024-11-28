@@ -26,8 +26,6 @@ authRouter.post(
   AuthController.login
 );
 
-// authRouter.post("/login-error", AuthController.loginError);
-
 authRouter.get(
   "/current",
   passportCall("jwt", { session: false }),

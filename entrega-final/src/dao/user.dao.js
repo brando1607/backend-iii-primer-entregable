@@ -5,9 +5,13 @@ import { errors } from "../utils/errors/errors.js";
 
 export class UserDao {
   static async getAll() {
-    const users = await userModel.find();
+    try {
+      const users = await userModel.find();
 
-    return users ? users : "There are no users currently";
+      return users.length > 0 ? users : CustomError.newError(errors.notFound);
+    } catch (error) {
+      throw error;
+    }
   }
   static async getById({ userId }) {
     try {
@@ -29,6 +33,10 @@ export class UserDao {
     const { id, body, elementsToChange } = data;
 
     try {
+      if (id.length !== 24) {
+        return CustomError.newError(errors.error.wrongUserId);
+      }
+
       let user = await userModel.findById(id);
 
       if (!user) {
@@ -91,6 +99,10 @@ export class UserDao {
   }
   static async delete({ userId }) {
     try {
+      if (userId.length !== 24) {
+        return CustomError.newError(errors.error.wrongUserId);
+      }
+
       const user = await userModel.findById(userId);
 
       if (!user) return CustomError.newError(errors.notFound);
@@ -98,7 +110,7 @@ export class UserDao {
       await user.deleteOne();
       return { message: `user ${user.first_name} deleted` };
     } catch (error) {
-      console.error(error);
+      throw error;
     }
   }
 }

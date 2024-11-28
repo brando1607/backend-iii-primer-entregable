@@ -31,9 +31,6 @@ export class AuthController {
     });
     return res.status(200).send({ message: "Login successfull" });
   }
-  static loginError(req, res, next) {
-    return res.status(401).send(`Login not successfull`);
-  }
   static async current(req, res) {
     const user = {
       name: `${req.user.first_name} ${req.user.last_name}`,

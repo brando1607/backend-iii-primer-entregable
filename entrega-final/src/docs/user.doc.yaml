@@ -30,7 +30,7 @@ components:
             - user
           default: user
         cart:
-          $ref: "./cart.yaml#/components/schemas/Cart"
+          # $ref: "./cart.yaml#/components/schemas/Cart"
           description: "MongoDB ObjectId referencing the user's cart. Optional during user creation."
       required:
         - first_name
@@ -38,12 +38,12 @@ components:
         - email
         - password
       example:
-        id: 649f8f1e5e39a2a0e1c2d9b3
+        _id: 649f8f1e5e39a2a0e1c2d9b3
         first_name: Brando
         last_name: Hernandez
         email: brando@coder.com
         age: 30
-        password: "$2b$10$oF4vF95WrI1M.cfaEaTeOODGoTByE1kHFRHmDQZVI7nEhuNLR92By"
+        password: "hola123"
         role: user
         cart: 6744a512327a65d34f42c198
 
@@ -75,30 +75,18 @@ components:
               message:
                 type: string
               user:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    description: "The unique identifier of the user."
-                  first_name:
-                    type: string
-                  last_name:
-                    type: string
-                  email:
-                    type: string
-                  age:
-                    type: number
-                  role:
-                    type: string
+                $ref: '#/components/schemas/User'
             example:
               message: "user registered"
               user:
-                id: "649f8f1e5e39a2a0e1c2d9b3"
                 first_name: "Brando"
                 last_name: "Hernandez"
                 email: "brando@coder.com"
                 age: 30
+                password: "$2b$10$hV4WswKCvDX4ZqtG24WUy.t/.iLt4yEeK8Yy.IDgwCeedrvWylUc6"
                 role: "user"
+                cart: "6748921f902c9c10a3ff7359"
+                _id: "649f8f1e5e39a2a0e1c2d9b3"
 
     res400_registration:
       description: "User registration error"
@@ -154,6 +142,21 @@ components:
             error: "Unauthorized"
             details: "Email already in use"
 
+    res404_user_not_found:
+      description: "User not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              details:
+                type: string
+          example:
+            error: "Unauthorized"
+            details: "User not found"
+
     res401_login:
       description: "Login error"
       content:
@@ -161,10 +164,16 @@ components:
           schema:
             type: object
             properties:
-              message:
+              error:
+                type: string
+                example: "Unauthorized"
+              details:
                 type: string
                 example: "Invalid credentials"
-    
+          example:
+            error: "Unauthorized"
+            details: "Invalid credentials"   
+
     res401_no_auth_token:
       description: "Unauthorized - No authentication token"
       content:
@@ -199,11 +208,9 @@ components:
                   name:
                     type: string
                     description: "The user's full name."
-                    example: "Brando Hernandez"
                   age:
                     type: number
                     description: "The user's age."
-                    example: 30
           example:
             message: "User is logged in"
             user:
@@ -217,35 +224,7 @@ components:
           schema:
             type: array
             items:
-              type: object
-              properties:
-                _id:
-                  type: string
-                  description: "The unique identifier of the user."
-                first_name:
-                  type: string
-                  description: "User's first name."
-                last_name:
-                  type: string
-                  description: "User's last name."
-                email:
-                  type: string
-                  description: "User's email address."
-                age:
-                  type: number
-                  description: "User's age."
-                password:
-                  type: string
-                  description: "Hashed password stored securely."
-                role:
-                  type: string
-                  description: "The role of the user."
-                  enum:
-                    - admin
-                    - user
-                cart:
-                  type: string
-                  description: "MongoDB ObjectId referencing the user's cart."
+              $ref: '#/components/schemas/User'
           example:
             - _id: "6744a512327a65d34f42c19a"
               first_name: "brando"
@@ -277,7 +256,7 @@ components:
           example:
             message: "Id not 24 characters long"
 
-    res400_user_not_found:
+    res404_userNotFound:
       description: "No user found with the provided ID"
       content:
         application/json:
@@ -296,32 +275,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              _id:
-                type: string
-                description: "The unique identifier of the user."
-              first_name:
-                type: string
-                description: "The user's first name."
-              last_name:
-                type: string
-                description: "The user's last name."
-              email:
-                type: string
-                description: "The user's email address."
-              age:
-                type: number
-                description: "The user's age."
-              password:
-                type: string
-                description: "Hashed password stored securely."
-              role:
-                type: string
-                description: "The role of the user."
-              cart:
-                type: string
-                description: "The user's cart ID."
+            $ref: '#/components/schemas/User'
           example:
             _id: "6744a512327a65d34f42c19a"
             first_name: "brando"
@@ -358,26 +312,7 @@ components:
                 description: "Indicates that the request was empty and no elements were sent to modify."
                 example: "No elements were sent to modify"
               user:
-                type: object
-                properties:
-                  _id:
-                    type: string
-                    description: "The unique identifier of the user"
-                  first_name:
-                    type: string
-                  last_name:
-                    type: string
-                  email:
-                    type: string
-                  age:
-                    type: number
-                  password:
-                    type: string
-                  role:
-                    type: string
-                  cart:
-                    type: string
-                    description: "The user's cart ID"
+                $ref: '#/components/schemas/User'
           example:
             message: "No elements were sent to modify"
             user:
@@ -411,7 +346,6 @@ components:
                 message:
                   type: string
                   description: "A description of the validation error"
-                  example: "Name should be a string"
           example:
             - code: "invalid_type"
               expected: "string"
@@ -437,40 +371,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              message:
-                type: string
-                description: "Confirmation message indicating the update was successful."
-              user:
-                type: object
-                description: "Updated user details."
-                properties:
-                  _id:
-                    type: string
-                    description: "Unique identifier for the user."
-                  first_name:
-                    type: string
-                    description: "Updated first name of the user."
-                    example: "brando"
-                  last_name:
-                    type: string
-                    description: "Updated last name of the user."
-                  email:
-                    type: string
-                    description: "Updated email of the user."
-                  age:
-                    type: integer
-                    description: "Updated age of the user."
-                  password:
-                    type: string
-                    description: "Encrypted password of the user."
-                  role:
-                    type: string
-                    description: "Role of the user in the system."
-                  cart:
-                    type: string
-                    description: "Cart ID associated with the user."
+            $ref: '#/components/schemas/User'
           example:
             message: "Elements changed"
             user:
@@ -495,3 +396,245 @@ components:
                 description: "Confirmation message indicating the user was deleted."
           example:
             message: "user brando deleted"
+
+    res200_logged_out:
+      description: "User logged out successfully"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Logged out"
+
+    res400_user_not_logged_in:
+      description: "User is not logged in"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "User not logged in"
+
+paths:
+  /api/auth/register:
+    post:
+      summary: "Registers a new user"
+      tags:
+        - User
+      description: "Creates a new user with the given information."
+      operationId: "registerUser"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+      responses:
+        201:
+          description: "User created successfully"
+          content:
+            application/json:
+              $ref: '#/components/responses/res201_user_registered'
+        400:
+          description: "Duplicate email error"
+          content:
+            application/json:
+              $ref: '#/components/responses/res400_duplicated_email'
+        404:
+          description: "Missing element"
+          content:
+            application/json:
+              $ref: '#/components/responses/res400_registration'
+
+  /api/auth/login:
+    post:
+      summary: "User login"
+      description: "Authenticate a user and return an access token."
+      tags:
+        - "User"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              example:
+                email: "brando@coder.com"
+                password: "hola123"
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          $ref: '#/components/responses/res200_login'
+        '401':
+          $ref: '#/components/responses/res401_login'
+        '404':
+          $ref: '#/components/responses/res404_user_not_found'
+  
+  /api/auth/current:
+    get:
+      summary: "Retrieve user profile"
+      description: "Get the logged-in user's profile information."
+      tags:
+        - User
+      responses:
+        '401':
+          $ref: '#/components/responses/res401_no_auth_token'
+        '200':
+          $ref: '#/components/responses/res200_profile'
+
+  /api/user/getAllUsers:
+    get:
+      summary: "Retrieve all users"
+      description: "Fetch a list of all users or return a 404 error if no users are found."
+      tags:
+        - User
+      responses:
+        '200':
+          $ref: '#/components/responses/res200_users'
+        '404':
+          $ref: '#/components/responses/res404_userNotFound'  
+
+  /api/user/getOneUser/{userId}:
+    get:
+      summary: "Retrieve a specific user by ID"
+      description: "Fetch a single user's details by their unique user ID."
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: "The unique ID of the user to retrieve."
+          schema:
+            type: string
+            example: "6744a512327a65d34f42c19a"
+      responses:
+        '200':
+          $ref: '#/components/responses/res200_user_found'
+        '400':
+          $ref: '#/components/responses/res400_invalid_id_length'
+        '404':
+          $ref: '#/components/responses/res404_userNotFound' 
+
+  /api/user/logout:
+      get:
+        summary: "Logout user"
+        tags:
+          - User
+        description: "Logs user out by clearing their session or authentication token."
+        responses:
+          res200_logged_out:
+            description: "User logged out successfully"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+          res400_user_not_logged_in:
+            description: "User is not logged in"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+
+  /api/user/{userId}:
+    put:
+      summary: "Modify a user's information"
+      description: "Update the information of an existing user (except for cart and ID) using their unique ID. Supports partial updates."
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: "The unique ID of the user to modify."
+          schema:
+            type: string
+            example: "6744a512327a65d34f42c19a"
+      requestBody:
+        description: "The fields to be updated in the user's profile."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: "The user's first name."
+                last_name:
+                  type: string
+                  description: "The user's last name."
+                email:
+                  type: string
+                  description: "The user's email address."
+                age:
+                  type: number
+                  description: "The user's age."
+                  example: 31
+                password:
+                  type: string
+                  description: "The user's new password."
+      responses:
+        '200':
+          $ref: '#/components/responses/res200_user_updated'
+        '400':
+          description: "Bad Request - One of several potential validation errors."
+          content:
+            application/json:
+              examples:
+                invalidIdLength:
+                  $ref: '#/components/responses/res400_invalid_id_length'
+                emptyRequest:
+                  $ref: '#/components/responses/res200_empty_request'
+                passwordSame:
+                  $ref: '#/components/responses/res400_password_same'
+                immutableFields:
+                  $ref: '#/components/responses/res400_immutable_fields'
+                invalidDataType:
+                  $ref: '#/components/responses/res400_invalid_data_type'
+        '404':
+          $ref: '#/components/responses/res404_userNotFound'
+
+  /api/user/delete/{userId}:
+    delete:
+      summary: "Delete a specific user by ID"
+      description: "Remove a user from the database using their unique user ID."
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: "The unique ID of the user to delete."
+          schema:
+            type: string
+            example: "6744a512327a65d34f42c19a"
+      responses:
+        '200':
+          $ref: '#/components/responses/res200_user_deleted'
+        '400':
+          $ref: '#/components/responses/res400_invalid_id_length'
+        '404':
+          $ref: '#/components/responses/res404_userNotFound'  

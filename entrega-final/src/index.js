@@ -27,13 +27,14 @@ app.use(passport.initialize());
 
 //Servidor
 app.listen(env.PORT, () => {
-  console.log(`Server listening on port http://localhost:${env.PORT}`);
+  console.log(
+    `Server listening on port http://localhost:${env.PORT} and Swagger UI on http://localhost:${env.PORT}/api/doc`
+  );
 });
 
 //Documentation config
 const specs = swaggerJSDoc(opts);
 app.use("/api/doc", serve, setup(specs));
-console.log(`Swagger UI on http://localhost:${env.PORT}/api/doc`);
 
 //router config
 app.use("/api", router);
