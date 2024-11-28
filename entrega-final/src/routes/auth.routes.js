@@ -26,7 +26,7 @@ authRouter.post(
   AuthController.login
 );
 
-authRouter.post("/login-error", AuthController.loginError);
+// authRouter.post("/login-error", AuthController.loginError);
 
 authRouter.get(
   "/current",

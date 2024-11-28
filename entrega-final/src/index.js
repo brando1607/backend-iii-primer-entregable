@@ -7,6 +7,9 @@ import { dbConnection } from "./config/mongoConfig.js";
 import { router } from "./routes/index.routes.js";
 import { initializePassport } from "./config/passport.config.js";
 import { env } from "./utils/env.utils.js";
+import { opts } from "./utils/swagger.js";
+import { serve, setup } from "swagger-ui-express";
+import swaggerJSDoc from "swagger-jsdoc";
 
 //Express config
 const app = express();
@@ -26,6 +29,11 @@ app.use(passport.initialize());
 app.listen(env.PORT, () => {
   console.log(`Server listening on port http://localhost:${env.PORT}`);
 });
+
+//Documentation config
+const specs = swaggerJSDoc(opts);
+app.use("/api/doc", serve, setup(specs));
+console.log(`Swagger UI on http://localhost:${env.PORT}/api/doc`);
 
 //router config
 app.use("/api", router);

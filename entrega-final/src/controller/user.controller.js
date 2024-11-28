@@ -9,16 +9,17 @@ export class UserController {
       console.error(error);
     }
   }
-  static async getById(req, res) {
+  static async getById(req, res, next) {
     const { userId } = req.params;
     try {
       const user = await GetRepositories.userRepository.getById({ userId });
       return res.status(200).send(user);
     } catch (error) {
       console.error(error);
+      next(error);
     }
   }
-  static async update(req, res) {
+  static async update(req, res, next) {
     const data = {
       id: req.params.userId,
       body: req.body,
@@ -29,7 +30,7 @@ export class UserController {
       const userUpdated = await GetRepositories.userRepository.update({ data });
       return res.status(201).send(userUpdated);
     } catch (error) {
-      return res.status(500).send(error);
+      next(error);
     }
   }
   static async logout(req, res) {

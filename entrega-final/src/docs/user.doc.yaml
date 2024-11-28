@@ -1,0 +1,497 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Automatically generated MongoDB ObjectId."
+          readOnly: true
+        first_name:
+          type: string
+          description: "User's first name."
+        last_name:
+          type: string
+          description: "User's last name."
+        email:
+          type: string
+          description: "User's email address."
+        age:
+          type: number
+          description: "User's age."
+        password:
+          type: string
+          description: "Hashed password stored securely."
+        role:
+          type: string
+          description: "The role of the user. Defaults to 'user'."
+          enum:
+            - admin
+            - user
+          default: user
+        cart:
+          $ref: "./cart.yaml#/components/schemas/Cart"
+          description: "MongoDB ObjectId referencing the user's cart. Optional during user creation."
+      required:
+        - first_name
+        - last_name
+        - email
+        - password
+      example:
+        id: 649f8f1e5e39a2a0e1c2d9b3
+        first_name: Brando
+        last_name: Hernandez
+        email: brando@coder.com
+        age: 30
+        password: "$2b$10$oF4vF95WrI1M.cfaEaTeOODGoTByE1kHFRHmDQZVI7nEhuNLR92By"
+        role: user
+        cart: 6744a512327a65d34f42c198
+
+  responses:
+    res200_login:
+      description: "Login successful, JWT created"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Login successful"
+          headers:
+            Set-cookie:
+              description: "JWT set as a cookie"
+              schema:
+                type: string
+                example: "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImlnbmEyQGdtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiZmlyc3RfbmFtZSI6ImJyYW5kbyIsImxhc3RfbmFtZSI6Imhlcm5hbmRleiIsImFnZSI6MzAsImlhdCI6MTczMjY0Mzc2MiwiZXhwIjoxNzMyNjQzOTQyfQ.QZ0zrhr_6yN4sDFkgBTBWlRrK5hJ_lq1eLrW5NLlT6g; HttpOnly; Max-Age=180"
+
+    res201_user_registered:
+      description: "User successfully registered"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              user:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: "The unique identifier of the user."
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  email:
+                    type: string
+                  age:
+                    type: number
+                  role:
+                    type: string
+            example:
+              message: "user registered"
+              user:
+                id: "649f8f1e5e39a2a0e1c2d9b3"
+                first_name: "Brando"
+                last_name: "Hernandez"
+                email: "brando@coder.com"
+                age: 30
+                role: "user"
+
+    res400_registration:
+      description: "User registration error"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: "Error code indicating the type of validation issue."
+                expected:
+                  type: string
+                  description: "The data type that was expected."
+                  example: "string"
+                received:
+                  type: string
+                  description: "The data type that was actually received."
+                  example: "undefined"
+                path:
+                  type: array
+                  items:
+                    type: string
+                  description: "The path to the field that caused the error."
+                  example: ["password"]
+                message:
+                  type: string
+                  description: "Detailed error message."
+                  example: "password is required"
+            example:
+              - code: "invalid_type"
+                expected: "string"
+                received: "undefined"
+                path: ["password"]
+                message: "password is required"
+
+    res400_duplicated_email:
+      description: "Email already in use"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: "A short error message indicating the issue."
+              details:
+                type: string
+                description: "Detailed error message providing more context."
+          example:
+            error: "Unauthorized"
+            details: "Email already in use"
+
+    res401_login:
+      description: "Login error"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Invalid credentials"
+    
+    res401_no_auth_token:
+      description: "Unauthorized - No authentication token"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: "Short error message indicating the issue."
+              details:
+                type: string
+                description: "Detailed error message providing more context."
+          example:
+            error: "Unauthorized"
+            details: "No auth token"
+
+    res200_profile:
+      description: "User profile information retrieved successfully"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "A message indicating the success of the request."
+                example: "User is logged in"
+              user:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: "The user's full name."
+                    example: "Brando Hernandez"
+                  age:
+                    type: number
+                    description: "The user's age."
+                    example: 30
+          example:
+            message: "User is logged in"
+            user:
+              name: "Brando Hernandez"
+              age: 30
+    
+    res200_users:
+      description: "All users successfully retrieved"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  description: "The unique identifier of the user."
+                first_name:
+                  type: string
+                  description: "User's first name."
+                last_name:
+                  type: string
+                  description: "User's last name."
+                email:
+                  type: string
+                  description: "User's email address."
+                age:
+                  type: number
+                  description: "User's age."
+                password:
+                  type: string
+                  description: "Hashed password stored securely."
+                role:
+                  type: string
+                  description: "The role of the user."
+                  enum:
+                    - admin
+                    - user
+                cart:
+                  type: string
+                  description: "MongoDB ObjectId referencing the user's cart."
+          example:
+            - _id: "6744a512327a65d34f42c19a"
+              first_name: "brando"
+              last_name: "hernandez"
+              email: "igna2@gmail.com"
+              age: 30
+              password: "$2b$10$oF4vF95WrI1M.cfaEaTeOODGoTByE1kHFRHmDQZVI7nEhuNLR92By"
+              role: "user"
+              cart: "6744a512327a65d34f42c198"
+            - _id: "6747ab63a51c398de0bb4605"
+              first_name: "brando"
+              last_name: "hernandez"
+              email: "ign2@gmail.com"
+              age: 30
+              password: "$2b$10$RCHnrxghYoTrbfQMiABpguCVqcd84RpVqGD9lnSvq2ad/LpdG27QC"
+              role: "user"
+              cart: "6747ab63a51c398de0bb4603"
+
+    res400_invalid_id_length:
+      description: "User ID is not 24 characters long"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Detailed error message"
+          example:
+            message: "Id not 24 characters long"
+
+    res400_user_not_found:
+      description: "No user found with the provided ID"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Detailed error message indicating no user was found."
+                example: "Not Found"
+          example:
+            message: "Not Found"
+
+    res200_user_found:
+      description: "User found successfully"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              _id:
+                type: string
+                description: "The unique identifier of the user."
+              first_name:
+                type: string
+                description: "The user's first name."
+              last_name:
+                type: string
+                description: "The user's last name."
+              email:
+                type: string
+                description: "The user's email address."
+              age:
+                type: number
+                description: "The user's age."
+              password:
+                type: string
+                description: "Hashed password stored securely."
+              role:
+                type: string
+                description: "The role of the user."
+              cart:
+                type: string
+                description: "The user's cart ID."
+          example:
+            _id: "6744a512327a65d34f42c19a"
+            first_name: "brando"
+            last_name: "hernandez"
+            email: "igna2@gmail.com"
+            age: 30
+            password: "$2b$10$oF4vF95WrI1M.cfaEaTeOODGoTByE1kHFRHmDQZVI7nEhuNLR92By"
+            role: "user"
+            cart: "6744a512327a65d34f42c198"
+
+    res400_password_same:
+      description: "Password can't be the same as the current one"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Error message indicating the password can't be changed to the same value."
+                example: "password can't be the same as current one"
+          example:
+            message: "password can't be the same as current one"
+
+    res200_empty_request:
+      description: "No elements were sent to modify the user"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Indicates that the request was empty and no elements were sent to modify."
+                example: "No elements were sent to modify"
+              user:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: "The unique identifier of the user"
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  email:
+                    type: string
+                  age:
+                    type: number
+                  password:
+                    type: string
+                  role:
+                    type: string
+                  cart:
+                    type: string
+                    description: "The user's cart ID"
+          example:
+            message: "No elements were sent to modify"
+            user:
+              _id: "6744a512327a65d34f42c19a"
+              first_name: "brando"
+              last_name: "hernandez"
+              email: "igna2@gmail.com"
+              age: 30
+              password: "$2b$10$oF4vF95WrI1M.cfaEaTeOODGoTByE1kHFRHmDQZVI7nEhuNLR92By"
+              role: "user"
+              cart: "6744a512327a65d34f42c198"
+
+    res400_invalid_data_type:
+      description: "The request contains invalid data types for one or more elements"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: "Error code indicating the type of validation error"
+                expected:
+                  type: string
+                  description: "The expected data type for the field"
+                received:
+                  type: string
+                  description: "The actual data type received"
+                message:
+                  type: string
+                  description: "A description of the validation error"
+                  example: "Name should be a string"
+          example:
+            - code: "invalid_type"
+              expected: "string"
+              received: "number"
+              path: ["first_name"]
+              message: "Name should be a string"
+
+    res400_immutable_fields:
+      description: "An attempt was made to modify immutable fields like 'id' or 'cart'."
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Error message indicating the restriction."
+          example:
+            message: "User's id or cart can't be changed"
+
+    res200_user_updated:
+      description: "User's information was successfully updated."
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Confirmation message indicating the update was successful."
+              user:
+                type: object
+                description: "Updated user details."
+                properties:
+                  _id:
+                    type: string
+                    description: "Unique identifier for the user."
+                  first_name:
+                    type: string
+                    description: "Updated first name of the user."
+                    example: "brando"
+                  last_name:
+                    type: string
+                    description: "Updated last name of the user."
+                  email:
+                    type: string
+                    description: "Updated email of the user."
+                  age:
+                    type: integer
+                    description: "Updated age of the user."
+                  password:
+                    type: string
+                    description: "Encrypted password of the user."
+                  role:
+                    type: string
+                    description: "Role of the user in the system."
+                  cart:
+                    type: string
+                    description: "Cart ID associated with the user."
+          example:
+            message: "Elements changed"
+            user:
+              _id: "6744a512327a65d34f42c19a"
+              first_name: "brando"
+              last_name: "hernandez"
+              email: "igna2@gmail.com"
+              age: 30
+              password: "$2b$10$oF4vF95WrI1M.cfaEaTeOODGoTByE1kHFRHmDQZVI7nEhuNLR92By"
+              role: "user"
+              cart: "6744a512327a65d34f42c198"
+
+    res200_user_deleted:
+      description: "User was successfully deleted."
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Confirmation message indicating the user was deleted."
+          example:
+            message: "user brando deleted"

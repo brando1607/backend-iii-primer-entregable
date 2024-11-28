@@ -2,6 +2,8 @@ import { errors } from "../utils/errors/errors.js";
 import { logger } from "../utils/winston.utils.js";
 
 export function errorHandler(error, req, res, next) {
+  console.log(error);
+
   const message = `${req.method} ${req.url} - ${error.message.toUpperCase()}`;
   if (error.statusCode) {
     logger.error(message);

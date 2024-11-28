@@ -37,7 +37,8 @@ export function initializePassport() {
 
           return done(null, user);
         } catch (error) {
-          if (error.code === 11000) return done("Email already in use");
+          if (error.code === 11000)
+            return done(null, false, { message: "Email already in use" });
 
           return done(error);
         }

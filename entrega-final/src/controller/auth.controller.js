@@ -1,13 +1,15 @@
 import { generateToken } from "../utils/jwt.js";
+import { CustomError } from "../utils/errors/customError.utils.js";
+import { errors } from "../utils/errors/errors.js";
 
 export class AuthController {
   static async register(req, res) {
     const user = req.user;
 
-    return res.status(200).send({ message: "user registered", user });
+    return res.status(201).send({ message: "user registered", user });
   }
-  static registerFail(req, res) {
-    return res.status(401).send(`Register not successul`);
+  static registerFail(req, res, next) {
+    return next(CustomError.newError(errors.error.registrationError));
   }
 
   static async login(req, res) {
@@ -29,7 +31,7 @@ export class AuthController {
     });
     return res.status(200).send({ message: "Login successfull" });
   }
-  static loginError(req, res) {
+  static loginError(req, res, next) {
     return res.status(401).send(`Login not successfull`);
   }
   static async current(req, res) {
