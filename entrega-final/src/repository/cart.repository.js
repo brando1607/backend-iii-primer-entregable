@@ -2,8 +2,8 @@ export class CartRepository {
   constructor(dao) {
     this.dao = dao;
   }
-  async create({ tokenData, body }) {
-    return await this.dao.create({ tokenData, body });
+  async create({ tokenData }) {
+    return await this.dao.create({ tokenData });
   }
   async getById({ cartId }) {
     return await this.dao.getById({ cartId });

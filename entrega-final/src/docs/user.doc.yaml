@@ -30,7 +30,7 @@ components:
             - user
           default: user
         cart:
-          # $ref: "./cart.yaml#/components/schemas/Cart"
+          $ref: "./cart.yaml#/components/schemas/Cart"
           description: "MongoDB ObjectId referencing the user's cart. Optional during user creation."
       required:
         - first_name

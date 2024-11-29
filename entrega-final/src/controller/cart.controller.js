@@ -12,23 +12,38 @@ export class CartController {
     }
   }
   static async create(req, res) {
-    const tokenData = verifyToken(req.cookies.token);
-    const body = req.body;
-
     try {
-      const userCreated = await GetRepositories.carRepository.create({
+      const token = req.cookies.token;
+
+      if (!token) {
+        return res.status(404).json({
+          message: `Please login to complete this action`,
+        });
+      }
+
+      const tokenData = verifyToken(token);
+
+      const cartCreated = await GetRepositories.carRepository.create({
         tokenData,
-        body,
       });
-      return res.status(200).send(userCreated);
+      return res.send(cartCreated);
     } catch (error) {
       console.error(error);
     }
   }
   static async addProduct(req, res) {
-    const tokenData = verifyToken(req.cookies.token);
-    const body = req.body;
     try {
+      const token = req.cookies.token;
+
+      if (!token) {
+        return res.status(404).json({
+          message: `Please login to complete this action`,
+        });
+      }
+
+      const tokenData = verifyToken(token);
+      const body = req.body;
+
       const productAdded = await GetRepositories.carRepository.addProduct({
         tokenData,
         body,

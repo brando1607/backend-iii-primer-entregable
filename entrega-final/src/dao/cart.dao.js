@@ -21,55 +21,22 @@ export class CartDao {
       let user = await userModel.findOne({ email: tokenData.email });
 
       if (user.cart === null) {
-        const newCart = await cartModel.create({ products: [] });
-
-        user = await userModel.findByIdAndUpdate(
-          user._id,
-          { cart: newCart._id },
-          { new: true }
-        );
+        return { message: "Cart not found" };
       }
 
       const userCart = await cartModel.findById(user.cart);
 
       const product = {
-        name: body.name,
-        price: body.price,
-        stock: body.stock,
+        id: body.id,
+        amount: body.amount,
       };
 
-      //as the body can be sent  directly through the addProduct endpoint, or the create endpoint
-      //the value in it can be different. so depending on where it comes from, the product will be
-      //looked up accrodingly
+      if (product.id.length !== 24)
+        return { message: "ID doesn't have the appropiate length" };
 
-      const bodySentThroughAddProduct = product.name ? true : false;
+      let productExists = await productModel.findOne({ _id: product.id });
 
-      let productExists = false;
-
-      if (!bodySentThroughAddProduct) {
-        try {
-          let id = body.products[0]._id;
-
-          productExists = await productModel.findOne({ _id: id });
-          if (!productExists) return { messae: "product not in inventory" };
-        } catch (error) {
-          if (error.messageFormat === undefined) {
-            return `Product doesn't exist in inventory but cart created ${userCart}`;
-          }
-          console.error(error);
-        }
-      } else {
-        try {
-          productExists = await productModel.findOne({ name: product.name });
-
-          if (!productExists) return { messae: "product not in inventory" };
-        } catch (error) {
-          if (error.messageFormat === undefined) {
-            return `Product doesn't exist in inventory but cart created ${userCart}`;
-          }
-          console.error(error);
-        }
-      }
+      if (!productExists) return { message: "product not in inventory" };
 
       const isThisProductInCart = userCart.products.filter(
         (e) => e._id.toString() === productExists._id.toString()
@@ -83,20 +50,31 @@ export class CartDao {
 
       if (!isThereStockToAddToCart) {
         return {
-          message: `not enough stock to add product to the cart, product can't be added`,
+          message: `not enough stock to add product to the cart, product can't be added.`,
         };
       }
-
       if (isThisProductInCart.length > 0) {
-        if (userCart.products[productIndex].quantity >= productExists.stock) {
+        let amountOfProductInCart = userCart.products[productIndex].quantity;
+
+        if (amountOfProductInCart + product.amount > productExists.stock) {
           return {
-            message: `not enough stock to add product to the cart, product can't be added`,
+            message: `You curently have ${amountOfProductInCart} of this product in your cart and are trying to add ${product.amount} more. However, the product's stock is ${productExists.stock}, please add a lower amount or wait until there is more stock.`,
           };
         }
-        userCart.products[productIndex].quantity += 1;
+
+        userCart.products[productIndex].quantity += product.amount;
         await userCart.save();
       } else {
-        userCart.products.push(productExists._id);
+        if (product.amount > productExists.stock) {
+          return {
+            message: "Can't add an amount greater than what's in stock",
+          };
+        }
+
+        userCart.products.push({
+          _id: product.id,
+          quantity: product.amount,
+        });
         await userCart.save();
       }
       const result = {
@@ -110,19 +88,23 @@ export class CartDao {
     }
   }
 
-  static async create({ tokenData, body }) {
+  static async create({ tokenData }) {
     try {
       const user = await userModel.findOne({ email: tokenData.email });
 
-      if (!tokenData) {
-        return { message: `User not found, must be logged in to create cart` };
-      }
       const userHasCart = user.cart ? true : false;
 
       if (userHasCart) {
         return { message: `User already has a cart` };
       } else {
-        const newCart = await this.addProduct({ tokenData, body });
+        const newCart = await cartModel.create({ products: [] });
+
+        await userModel.findOneAndUpdate(
+          { _id: user._id },
+          { cart: newCart },
+          { new: true }
+        );
+
         return { message: `Cart created`, newCart };
       }
     } catch (error) {
