@@ -435,6 +435,7 @@ paths:
                 amount:
                   type: number
                   description: "The quantity of the product to add."
+                  minimum: 1
               example:
                 id: "672e10d1692b24919ed7e9ce"
                 amount: 4    
