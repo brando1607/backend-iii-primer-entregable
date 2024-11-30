@@ -393,11 +393,12 @@ paths:
           description: "The ID of the cart to retrieve."
           schema:
             type: string
+            example: "672e10d1692b24919ed7e9ca"
       responses:
-        404:
+        '404':
           $ref: '#/components/responses/res404_cart_not_found'
         
-        200:
+        '200':
           $ref: '#/components/responses/res200_cart_found'
   
   /api/cart/create:
@@ -407,11 +408,11 @@ paths:
         - Cart
       description: "This endpoint allows a user to create a new cart with a specified list of products. If the user is not logged in or already has a cart, an appropriate error is returned."
       responses:
-        401:
+        '401':
           $ref: '#/components/responses/res401_unauthorized'
-        400:
+        '400':
           $ref: '#/components/responses/res400_cart_already_exists'
-        201:
+        '201':
           $ref: '#/components/responses/res201_cart_created'
 
   /api/cart/add-to-cart:
@@ -438,21 +439,22 @@ paths:
                 id: "672e10d1692b24919ed7e9ce"
                 amount: 4    
       responses:
-        404:
+        '404':
           $ref: '#/components/responses/res404_product_not_in_inventory'
         
-        400:
-          $ref: '#/components/responses/res400_not_enough_stock'
-        
-        400_invalid_id_length:
-          $ref: '#/components/responses/400_invalid_id_length'
-
-        res400_exceeds_cart_limit:
-          $ref: '#/components/responses/res400_exceeds_cart_limit'  
-
-        res400_amount_exceeds_stock:
-          $ref: '#/components/responses/res400_amount_exceeds_stock'  
-        
+        '400':
+          description: "Bad Request - One of several potential validation errors."
+          content:
+            application/json:
+              examples:
+                notEnoughStock:
+                  $ref: '#/components/responses/res400_not_enough_stock'
+                inalidIdLength:  
+                  $ref: '#/components/responses/res400_invalid_id_length'
+                exceedsCartLimit:
+                  $ref: '#/components/responses/res400_exceeds_cart_limit'  
+                amountExceedsStock: 
+                  $ref: '#/components/responses/res400_amount_exceeds_stock'  
         200:
           $ref: '#/components/responses/res200_product_added'
 
@@ -480,21 +482,28 @@ paths:
                 id: "672e10d1692b24919ed7e9ce"
                 amount: 4    
       responses:
-        404:
+        '404':
           $ref: '#/components/responses/res404_product_or_cart_not_found'
         
-        400_invalid_amount:
-          $ref: '#/components/responses/res400_invalid_amount_to_remove'
-            
-        400_amount_exceeds_quantity:
-          $ref: '#/components/responses/res400_amount_exceeds_quantity'
+        '400':
+          description: "Bad Request - One of several potential validation errors."
+          content:
+            application/json:
+              examples:
+                invalidAmountToRemove:
+                  $ref: '#/components/responses/res400_invalid_amount_to_remove'
+                amountExceedsQuantity:
+                  $ref: '#/components/responses/res400_amount_exceeds_quantity'
+        '200':
+          description: "Bad Request - One of several potential validation errors."
+          content:
+            application/json:
+              examples:
+                cartEmptied:
+                  $ref: '#/components/responses/res200_cart_emptied'
+                itemsRemoved:
+                  $ref: '#/components/responses/res200_items_removed'
 
-        200_cart_emptied:
-          $ref: '#/components/responses/res200_cart_emptied'
-          
-        200_items_removed:
-          $ref: '#/components/responses/res200_items_removed'
-    
   /api/cart/{cartId}/purchase:
     post:
       summary: "Complete the purchase of the items in the cart."
@@ -511,13 +520,18 @@ paths:
             type: string
             example: "672e10d1692b24919ed7e9ce"
       responses:
-        200:
-          $ref: '#/components/responses/res200_purchase_completed'
-        200_partial:
-          $ref: '#/components/responses/res200_partial_purchase_completed'
-        400:
+        '200':
+          description: "Bad Request - One of several potential validation errors."
+          content:
+            application/json:
+              examples:
+                purchaseCompleted:
+                  $ref: '#/components/responses/res200_purchase_completed'
+                partialPurchaseCompleted:
+                  $ref: '#/components/responses/res200_partial_purchase_completed'
+        '400':
           $ref: '#/components/responses/res400_products_not_available'
-        404:
+        '404':
           $ref: '#/components/responses/res404_cart_not_found'
 
   /api/cart/delete/{cartId}:
@@ -534,11 +548,12 @@ paths:
           description: "The ID of the cart to delete."
           schema:
             type: string
+            example: "672e10d1692b24919ed7e9ca"
       responses:
-        200:
+        '200':
           $ref: '#/components/responses/res200_cart_deleted'
         
-        404:
+        '404':
           $ref: '#/components/responses/res404_cart_not_found'
 
               

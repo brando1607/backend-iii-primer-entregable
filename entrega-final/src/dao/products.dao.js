@@ -3,7 +3,11 @@ import { productModel } from "../model/products.model.js";
 export class ProductDao {
   static async getAll() {
     try {
-      return await productModel.find();
+      const products = await productModel.find();
+
+      if (!products) return { message: "No products yet" };
+
+      return products;
     } catch (error) {
       console.error(error);
     }
@@ -14,7 +18,7 @@ export class ProductDao {
       return product;
     } catch (error) {
       if (error.messageFormat === undefined) {
-        return `Product not found`;
+        return { message: `Product not found` };
       }
       console.error(error);
     }
@@ -65,7 +69,7 @@ export class ProductDao {
       return result;
     } catch (error) {
       if (error.messageFormat === undefined) {
-        return `User not found`;
+        return { message: `User not found` };
       }
 
       console.error(error);
@@ -74,6 +78,9 @@ export class ProductDao {
   static async delete({ productId }) {
     try {
       const product = await productModel.findByIdAndDelete(productId);
+
+      if (!product) return { message: "Product not found" };
+
       return { message: "product deleted", product };
     } catch (error) {
       console.error(error);

@@ -18,10 +18,10 @@ productsRouter.get("/", ProductsController.getAll);
 
 productsRouter.get("/:productId", ProductsController.getById);
 
-productsRouter.put("/:productId", ProductsController.update);
+productsRouter.put("/update/:productId", ProductsController.update);
 
 productsRouter.delete(
-  "/:productId",
+  "/delete/:productId",
   passportCall("jwt", { session: false }),
   authorization(["admin"]),
   ProductsController.delete

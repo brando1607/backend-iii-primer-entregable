@@ -74,19 +74,20 @@ components:
             properties:
               message:
                 type: string
+                description: "Success message indicating the user was registered."
               user:
                 $ref: '#/components/schemas/User'
-            example:
-              message: "user registered"
-              user:
-                first_name: "Brando"
-                last_name: "Hernandez"
-                email: "brando@coder.com"
-                age: 30
-                password: "$2b$10$hV4WswKCvDX4ZqtG24WUy.t/.iLt4yEeK8Yy.IDgwCeedrvWylUc6"
-                role: "user"
-                cart: "6748921f902c9c10a3ff7359"
-                _id: "649f8f1e5e39a2a0e1c2d9b3"
+          example:
+            message: "user registered"
+            user:
+              first_name: "Brando"
+              last_name: "Hernandez"
+              email: "brando@coder.com"
+              age: 30
+              password: "$2b$10$hV4WswKCvDX4ZqtG24WUy.t/.iLt4yEeK8Yy.IDgwCeedrvWylUc6"
+              role: "user"
+              cart: "6748921f902c9c10a3ff7359"
+              _id: "649f8f1e5e39a2a0e1c2d9b3"
 
     res400_registration:
       description: "User registration error"
@@ -439,21 +440,12 @@ paths:
                 - email
                 - password
       responses:
-        201:
-          description: "User created successfully"
-          content:
-            application/json:
-              $ref: '#/components/responses/res201_user_registered'
-        400:
-          description: "Duplicate email error"
-          content:
-            application/json:
-              $ref: '#/components/responses/res400_duplicated_email'
-        404:
-          description: "Missing element"
-          content:
-            application/json:
-              $ref: '#/components/responses/res400_registration'
+        '201':
+          $ref: '#/components/responses/res201_user_registered'
+        '400':
+          $ref: '#/components/responses/res400_duplicated_email'
+        '404':
+          $ref: '#/components/responses/res400_registration'
 
   /api/auth/login:
     post:
@@ -539,7 +531,7 @@ paths:
           - User
         description: "Logs user out by clearing their session or authentication token."
         responses:
-          res200_logged_out:
+          '200':
             description: "User logged out successfully"
             content:
               application/json:
@@ -548,7 +540,8 @@ paths:
                   properties:
                     message:
                       type: string
-          res400_user_not_logged_in:
+                  example: "Logged out"
+          '400':
             description: "User is not logged in"
             content:
               application/json:
@@ -557,6 +550,7 @@ paths:
                   properties:
                     message:
                       type: string
+                  example: "User not logged in"
 
   /api/user/{userId}:
     put:
