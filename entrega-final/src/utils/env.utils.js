@@ -4,7 +4,6 @@ import { argsConfig } from "./args.utils.js";
 const { m } = argsConfig;
 const path = "./.env." + m;
 config({ path });
-console.log();
 
 export const env = {
   PORT: process.env.PORT,

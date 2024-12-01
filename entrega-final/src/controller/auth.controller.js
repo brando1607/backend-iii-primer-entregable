@@ -36,6 +36,6 @@ export class AuthController {
       name: `${req.user.first_name} ${req.user.last_name}`,
       age: req.user.age,
     };
-    return res.status(200).send({ message: "user is logged in", user: user });
+    return res.send({ message: "user is logged in", user: user });
   }
 }

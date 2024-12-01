@@ -30,7 +30,7 @@ export class UserController {
 
     try {
       const userUpdated = await GetRepositories.userRepository.update({ data });
-      return res.status(201).send(userUpdated);
+      return res.status(200).send(userUpdated);
     } catch (error) {
       next(error);
     }
