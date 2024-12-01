@@ -1,0 +1,214 @@
+components:
+  responses:
+    201_user_created:
+          description: "Users successfully created."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "3 user(s) created."
+
+    200_users_retrieved:
+      description: "List of users successfully retrieved."
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  description: "User's unique identifier."
+                first_name:
+                  type: string
+                  description: "User's first name."
+                last_name:
+                  type: string
+                  description: "User's last name."
+                email:
+                  type: string
+                  description: "User's email address."
+                age:
+                  type: number
+                  description: "User's age."
+                password:
+                  type: string
+                  description: "Hashed password."
+                role:
+                  type: string
+                  description: "User's role."
+                  enum:
+                    - admin
+                    - user
+                cart:
+                  type: string
+                  description: "MongoDB ObjectId referencing the user's cart. Optional."
+          example:
+            - _id: "674a2daaffce1a28b53f2afb"
+              first_name: "brando"
+              last_name: "hernandez"
+              email: "brando@gmail.com"
+              age: 30
+              password: "$2b$10$HCoBEqb1oO1wCIjZtQ6wFO9yZLl9thpIr5tn0zbm39l8Z2p4uEGYe"
+              role: "admin"
+              cart: "674a4fcbe874586fdf13d799"
+            - _id: "674b892f74e8d4b3b8d9cc70"
+              first_name: "laney"
+              last_name: "adams"
+              email: "laneyadams@entregable.com"
+              age: 48
+              password: "$2b$10$yPoHH0kuKCsYFeETyraZZ.0blFyoiqGFctMC51fs6mj196ejiZB/q"
+              role: "user"
+            - _id: "674b892f74e8d4b3b8d9cc72"
+              first_name: "joannie"
+              last_name: "bartoletti"
+              email: "joanniebartoletti@entregable.com"
+              age: 52
+              password: "$2b$10$oW6wxLhsmHdHR0g2KcLh7./FEXiPoH05/mXjMbOsLTM75DT.YBN5e"
+              role: "user"
+            - _id: "674b892f74e8d4b3b8d9cc74"
+              first_name: "domingo"
+              last_name: "kessler"
+              email: "domingokessler@entregable.com"
+              age: 23
+              password: "$2b$10$hRrZPLpIL0R1rFicm4ex1OOq0ZC7XmxeQF3ip5R9oCCoYxk3fadYW"
+              role: "user"
+
+    200_products_retrieved:
+      description: "List of products successfully retrieved."
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  description: "Product's unique identifier."
+                name:
+                  type: string
+                  description: "Product's name."
+                price:
+                  type: number
+                  description: "Price of the product."
+                stock:
+                  type: integer
+                  description: "Stock quantity available."
+                seller:
+                  type: string
+                  description: "Seller of the product."
+          example:
+            - _id: "672e10d1692b24919ed7e9c8"
+              name: "shirt"
+              price: 176.59
+              stock: 5
+              seller: "Dr. Bernadette Keeling"
+            - _id: "672e10d1692b24919ed7e9ca"
+              name: "towels"
+              price: 194.69
+              stock: 17
+              seller: "Tommy Braun"
+            - _id: "672e10d1692b24919ed7e9cc"
+              name: "salad"
+              price: 40.35
+              stock: 27
+              seller: "Miss Ida Hudson"
+
+    201_products_created:
+      description: "Products successfully created."
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Confirmation message."
+          example:
+            message: "2 product(s) created."
+
+    400_wrong_type:
+      description: "The provided element is of the wrong type."
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Error message explaining the issue."
+          example:
+            message: "Element must be a number" 
+
+paths:
+  /api/mocks/users/{n}:
+    get:
+      summary: "Create users"
+      tags:
+        - Mocks
+      description: "Creates users based on the number specified in the path parameter."
+      operationId: "createUsers"
+      parameters:
+        - name: n
+          in: path
+          required: true
+          description: "The number of users to create."
+          schema:
+            type: integer
+            example: 3
+            minimum: 1
+      responses:
+        '201':
+          $ref: '#/components/responses/201_user_created'
+        '400':
+          $ref: '#/components/responses/400_wrong_type'  
+
+  /api/mocks/users:
+    get:
+      summary: "Retrieve all users"
+      tags:
+        - Mocks
+      description: "Fetches a list of all users."
+      operationId: "getUsers"
+      responses:
+        '200':
+          $ref: '#/components/responses/200_users_retrieved'
+                    
+  /api/mocks/products/{n}:
+    post:
+      summary: "Create products"
+      tags:
+        - Mocks
+      description: "Creates products based on the number specified in the path parameter."
+      operationId: "createProducts"
+      parameters:
+        - name: n
+          in: path
+          required: true
+          description: "The number of products to create."
+          schema:
+            type: integer
+            example: 2
+            minimum: 1
+      responses:
+        '201':
+          $ref: '#/components/responses/201_products_created'
+        '400':
+          $ref: '#/components/responses/400_wrong_type'   
+
+  /api/mocks/products:
+    get:
+      summary: "Retrieve all products"
+      tags:
+        - Mocks
+      description: "Fetches a list of all products."
+      operationId: "getProducts"
+      responses:
+        '200':
+          $ref: '#/components/responses/200_products_retrieved'                
+

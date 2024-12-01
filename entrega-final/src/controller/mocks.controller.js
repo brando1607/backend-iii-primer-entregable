@@ -6,9 +6,13 @@ import { userModel } from "../model/user.model.js";
 import { productModel } from "../model/products.model.js";
 
 export class MocksController {
-  static async createMockUsers(req, res) {
+  static async createMockUsers(req, res, next) {
     const amount = Number(req.params.n);
+
     try {
+      if (isNaN(amount + 1)) {
+        return CustomError.newError(errors.error.wrongType);
+      }
       for (let i = 1; i <= amount; i++) {
         let firstName = faker.person.firstName().toLowerCase();
         let lastName = faker.person.lastName().toLowerCase();
@@ -25,7 +29,7 @@ export class MocksController {
 
       return res.status(201).json({ message: `${amount} user(s) created.` });
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
   static async getUsers(req, res, next) {
@@ -45,6 +49,10 @@ export class MocksController {
   static async createMockProducts(req, res) {
     const amount = req.params.n;
     try {
+      if (isNaN(amount + 1)) {
+        return CustomError.newError(errors.error.wrongType);
+      }
+
       for (let i = 1; i <= amount; i++) {
         let randomStock = Math.floor(Math.random() * (70 - 1) + 1);
 

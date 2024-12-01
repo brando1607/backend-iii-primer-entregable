@@ -9,6 +9,7 @@ export const errors = {
       statucCode: 400,
     },
     empty: { message: "Request sent empty", statusCode: 400 },
+    wrongType: { message: "Element must be a number", statusCode: 400 },
   },
   auth: { message: "Invalid Credentials", statusCode: 401 },
   forbidden: { message: "Forbidden Action", statusCode: 403 },
