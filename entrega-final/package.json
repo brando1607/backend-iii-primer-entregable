@@ -7,7 +7,7 @@
     "prod": "node --watch src/index.js",
     "dev": "node --watch src/index.js -m dev",
     "test": "node --watch src/index.js -m test",
-    "supertest": "mocha ./src/test/"
+    "userSupertest": "mocha ./src/test/users.test.js"
   },
   "keywords": [],
   "author": "Brando Hernández",
