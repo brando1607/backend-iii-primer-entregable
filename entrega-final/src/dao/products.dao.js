@@ -1,4 +1,6 @@
 import { productModel } from "../model/products.model.js";
+import { errors } from "../utils/errors/errors.js";
+import { CustomError } from "../utils/errors/customError.utils.js";
 
 export class ProductDao {
   static async getAll() {
@@ -31,17 +33,14 @@ export class ProductDao {
       });
 
       if (duplicate.length > 0) {
-        return {
-          message:
-            "seller already has a product with the same name. try updating the stock of the existing one",
-        };
+        return CustomError.newError(errors.error.duplicate);
       }
 
       const result = await productModel.create(product);
 
       return { message: "product created", result };
     } catch (error) {
-      console.error(error);
+      throw error;
     }
   }
   static async update({ data }) {

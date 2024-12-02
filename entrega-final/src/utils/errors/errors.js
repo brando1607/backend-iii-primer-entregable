@@ -10,6 +10,11 @@ export const errors = {
     },
     empty: { message: "Request sent empty", statusCode: 400 },
     wrongType: { message: "Element must be a number", statusCode: 400 },
+    duplicate: {
+      message:
+        "seller already has a product with the same name. try updating the stock of the existing one",
+      statucCode: 400,
+    },
   },
   auth: { message: "Invalid Credentials", statusCode: 401 },
   forbidden: { message: "Forbidden Action", statusCode: 403 },

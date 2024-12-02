@@ -2,25 +2,31 @@ import { GetRepositories } from "../repository/index.repository.js";
 import { verifyToken } from "../utils/jwt.js";
 
 export class ProductsController {
-  static async create(req, res) {
-    const tokenData = verifyToken(req.cookies.token);
+  static async create(req, res, next) {
+    try {
+      const tokenData = verifyToken(req.cookies.token);
 
-    const { name, price, stock } = req.body;
+      const { name, price, stock } = req.body;
 
-    if (!tokenData) return res.send(`can't create product if not logged in`);
+      if (!tokenData) return res.send(`can't create product if not logged in`);
 
-    if (!name || !price || !stock) {
-      return res.send("All elements are required");
+      if (!name || !price || !stock) {
+        return res.send("All elements are required");
+      }
+
+      const product = {
+        name,
+        price,
+        stock,
+        seller: `${tokenData.first_name} ${tokenData.last_name}`,
+      };
+      const newProduct = await GetRepositories.productRepository.create(
+        product
+      );
+      return res.status(200).send(newProduct);
+    } catch (error) {
+      next(error);
     }
-
-    const product = {
-      name,
-      price,
-      stock,
-      seller: `${tokenData.first_name} ${tokenData.last_name}`,
-    };
-    const newProduct = await GetRepositories.productRepository.create(product);
-    return res.status(200).send(newProduct);
   }
   static async getAll(req, res) {
     try {
@@ -53,7 +59,7 @@ export class ProductsController {
       const productUpdated = await GetRepositories.productRepository.update({
         data,
       });
-      return res.status(201).send(productUpdated);
+      return res.status(200).send(productUpdated);
     } catch (error) {
       return res.status(500).send(error);
     }
@@ -64,7 +70,7 @@ export class ProductsController {
       const result = await GetRepositories.productRepository.delete({
         productId,
       });
-      return res.status(201).send(result);
+      return res.status(200).send(result);
     } catch (error) {
       console.error(error);
     }

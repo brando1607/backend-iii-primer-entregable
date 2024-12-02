@@ -235,7 +235,7 @@ components:
                 seller: "Tommy Braun"            
 
 paths:
-  /api/products/:
+  /api/products/getAllProducts:
     get:
       summary: "Retrieve all products"
       tags:

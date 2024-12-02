@@ -7,7 +7,11 @@
     "prod": "node --watch src/index.js",
     "dev": "node --watch src/index.js -m dev",
     "test": "node --watch src/index.js -m test",
-    "userSupertest": "mocha ./src/test/users.test.js"
+    "userSupertest": "mocha ./src/test/users.test.js",
+    "productsSupertest": "mocha ./src/test/products.test.js",
+    "cartSupertest": "mocha ./src/test/cart.test.js",
+    "mocksSupertest": "mocha ./src/test/mocks.test.js"
+
   },
   "keywords": [],
   "author": "Brando Hernández",

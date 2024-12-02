@@ -21,7 +21,7 @@ describe("Tests for user routes", () => {
     password: "hola",
   };
 
-  let uid = "";
+  let uid;
 
   let cookie;
 
@@ -33,8 +33,8 @@ describe("Tests for user routes", () => {
     expect(statusCode).to.be.equals(201);
   });
 
-  it("User is deleted", async () => {
-    const response = await requester.delete(`/user/delete/${uid}`);
+  it("User is returned by id", async () => {
+    const response = await requester.get(`/user/getOneUser/${uid}`);
     const { statusCode } = response;
 
     expect(statusCode).to.be.equals(200);
@@ -53,23 +53,20 @@ describe("Tests for user routes", () => {
 
     expect(_body).to.be.an("array");
   });
-  it("User is returned in an object", async () => {
-    const response = await requester.get("/user/getOneUser/:userId");
-    const { _body } = response;
 
-    expect(_body).to.be.an("object");
-  });
-
-  it("User is updated", async () => {
-    const response = await requester.put(`/user/${uid}`).send(updateObject);
+  it("User is logged in", async () => {
+    const response = await requester.post(`/auth/login`).send(loginObject);
+    cookie = response.headers["set-cookie"];
     const { statusCode } = response;
 
     expect(statusCode).to.be.equals(200);
   });
 
-  it("User is logged in", async () => {
-    const response = await requester.post(`/auth/login`).send(loginObject);
-    cookie = response.headers["set-cookie"];
+  it("User is updated", async () => {
+    const response = await requester
+      .put(`/user/${uid}`)
+      .send(updateObject)
+      .set("Cookie", cookie);
     const { statusCode } = response;
 
     expect(statusCode).to.be.equals(200);
@@ -91,6 +88,13 @@ describe("Tests for user routes", () => {
 
   it("User is logged out", async () => {
     const response = await requester.get(`/user/logout`).set("Cookie", cookie);
+    const { statusCode } = response;
+
+    expect(statusCode).to.be.equals(200);
+  });
+
+  it("User is deleted", async () => {
+    const response = await requester.delete(`/user/delete/${uid}`);
     const { statusCode } = response;
 
     expect(statusCode).to.be.equals(200);
