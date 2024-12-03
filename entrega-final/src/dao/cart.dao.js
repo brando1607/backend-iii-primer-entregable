@@ -4,6 +4,8 @@ import { productModel } from "../model/products.model.js";
 import { randomUUID } from "node:crypto";
 import { ticketModel } from "../model/ticket.model.js";
 import { sendEmail } from "../config/nodemailer.config.js";
+import { CustomError } from "../utils/errors/customError.utils.js";
+import { errors } from "../utils/errors/errors.js";
 
 export class CartDao {
   static async getById({ cartId }) {
@@ -95,7 +97,7 @@ export class CartDao {
       const userHasCart = user.cart ? true : false;
 
       if (userHasCart) {
-        return { message: `User already has a cart` };
+        return CustomError.newError(errors.error.cart);
       } else {
         const newCart = await cartModel.create({ products: [] });
 
@@ -108,7 +110,7 @@ export class CartDao {
         return { message: `Cart created`, newCart };
       }
     } catch (error) {
-      console.error(error);
+      throw error;
     }
   }
   static async delete({ cartId }) {

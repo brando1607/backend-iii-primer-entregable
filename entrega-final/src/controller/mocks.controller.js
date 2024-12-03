@@ -4,6 +4,7 @@ import { CustomError } from "../utils/errors/customError.utils.js";
 import { errors } from "../utils/errors/errors.js";
 import { userModel } from "../model/user.model.js";
 import { productModel } from "../model/products.model.js";
+import { cartModel } from "../model/cart.model.js";
 
 export class MocksController {
   static async createMockUsers(req, res, next) {
@@ -17,6 +18,7 @@ export class MocksController {
         let firstName = faker.person.firstName().toLowerCase();
         let lastName = faker.person.lastName().toLowerCase();
         let randomAge = Math.floor(Math.random() * (70 - 18) + 18);
+        const newCart = await cartModel.create({ products: [] });
 
         await userModel.create({
           first_name: firstName,
@@ -24,6 +26,7 @@ export class MocksController {
           email: firstName + lastName + "@entregable.com",
           age: randomAge,
           password: "hola",
+          cart: newCart._id,
         });
       }
 

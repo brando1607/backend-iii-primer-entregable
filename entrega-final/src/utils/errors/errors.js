@@ -15,6 +15,7 @@ export const errors = {
         "seller already has a product with the same name. try updating the stock of the existing one",
       statucCode: 400,
     },
+    cart: { message: "User already has a cart", statucCode: 400 },
   },
   auth: { message: "Invalid Credentials", statusCode: 401 },
   forbidden: { message: "Forbidden Action", statusCode: 403 },

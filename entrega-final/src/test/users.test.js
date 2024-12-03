@@ -8,7 +8,7 @@ describe("Tests for user routes", () => {
   const data = {
     first_name: "brando",
     last_name: "hernandez",
-    email: "leslies@gmail.com",
+    email: "bhernandez@coder.com",
     age: 30,
     password: "hola",
     role: "user",

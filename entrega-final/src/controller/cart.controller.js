@@ -11,7 +11,7 @@ export class CartController {
       console.error(error);
     }
   }
-  static async create(req, res) {
+  static async create(req, res, next) {
     try {
       const token = req.cookies.token;
 
@@ -28,7 +28,7 @@ export class CartController {
       });
       return res.send(cartCreated);
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
   static async addProduct(req, res) {
