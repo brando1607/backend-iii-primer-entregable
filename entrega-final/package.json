@@ -4,21 +4,23 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "node src/index.js",
     "prod": "node --watch src/index.js",
     "dev": "node --watch src/index.js -m dev",
     "test": "node --watch src/index.js -m test",
     "userSupertest": "mocha ./src/test/users.test.js",
     "productsSupertest": "mocha ./src/test/products.test.js",
     "cartSupertest": "mocha ./src/test/cart.test.js",
-    "mocksSupertest": "mocha ./src/test/mocks.test.js"
-
+    "mocksSupertest": "mocha ./src/test/mocks.test.js",
+    "image": "docker build -t codercommerce .",
+    "docker": "docker run -p 8080:8080 codercommerce"
   },
   "keywords": [],
   "author": "Brando Hernández",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "commander": "^12.1.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
